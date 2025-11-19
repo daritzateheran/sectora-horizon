@@ -11,9 +11,6 @@ data
 # Notebooks checkpoints
 **/.ipynb_checkpoints/
 
-# Devcontainer artifacts
-.devcontainer/
-
 # VSCode
 .vscode/
 

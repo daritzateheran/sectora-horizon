@@ -1,9 +1,8 @@
-# data-ecosystem
+# data-ecosystem-superintendencia
 
-This repository contains the analytical work for two challenges:
+This repository contains the analytical work for challenge:
 
-- superintendencia (Superintendencia de Sociedades)
-- gb-santander (Alcaldía de Calarcá)
+- Superintendencia de Sociedades
 
 The project follows a modular structure. Shared logic lives in a common core; challenge-specific logic lives in dedicated modules.
 
@@ -12,8 +11,7 @@ The project follows a modular structure. Shared logic lives in a common core; ch
 data-ecosystem/
 ├── src/
 │   ├── core/               # Shared logic for both challenges
-│   ├── superintendencia/   # Challenge-specific code
-│   └── gb-santander/       # Challenge-specific code
+│   └── superintendencia/   # Challenge-specific code
 ├── scripts/                # ETLs, preprocessing, EDA runners, pipelines
 ├── data/
 │   ├── raw/                # Unmodified datasets

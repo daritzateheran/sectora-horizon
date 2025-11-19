@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Data
+data
+
+# Notebooks checkpoints
+**/.ipynb_checkpoints/
+
+# Devcontainer artifacts
+.devcontainer/
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store

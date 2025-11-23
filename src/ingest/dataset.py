@@ -5,11 +5,11 @@ from typing import Optional
 class SourceType(Enum):
     CSV = "csv"
     SOCRATA = "socrata"
-    TAB = "tab"
+    EXCEL = "excel"
 
 @dataclass
 class Dataset:
     name: str
     source: SourceType
-    path_or_url: str
-    page_size: Optional[int] = None
+    path: str | None = None
+    resource_id: str | None = None

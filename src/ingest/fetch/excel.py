@@ -2,34 +2,39 @@ import os
 from openpyxl import load_workbook
 import xlrd
 from ingest.fetch.raw import RawPort
+from ingest.fetch.metadata import BaseMetadata
+from ingest.errors import RawLoadError, MetadataUnavailableError
 
+class ExcelAdapter(RawPort):
 
-class TabAdapter(RawPort):
+    def fetchRaw(self, path: str) -> list[dict]:
+        try:
+            ext = os.path.splitext(path)[1].lower()
 
-    def fetchRaw(self, resource: str, params=None) -> list[dict]:
-        ext = os.path.splitext(resource)[1].lower()
-        if ext == ".xlsx":
-            return self._read_xlsx(resource)
-        elif ext == ".xls":
-            return self._read_xls(resource)
-        else:
-            raise ValueError(f"Unsupported tabular format: {ext}")
+            if ext == ".xlsx":
+                return self._read_xlsx(path)
+            elif ext == ".xls":
+                return self._read_xls(path)
+            else:
+                raise RawLoadError(f"Unsupported Excel format: {ext}")
 
-    def _read_xlsx(self, resource: str) -> list[dict]:
-        wb = load_workbook(resource, data_only=True)
+        except Exception as e:
+            raise RawLoadError(f"ExcelAdapter fetchRaw error for '{path}': {e}")
+
+    def _read_xlsx(self, path: str) -> list[dict]:
+        wb = load_workbook(path, data_only=True)
         ws = wb.active
         rows = list(ws.iter_rows(values_only=True))
-
         return self._normalize_rows(rows)
 
-    def _read_xls(self, resource: str) -> list[dict]:
-        book = xlrd.open_workbook(resource)
+    def _read_xls(self, path: str) -> list[dict]:
+        book = xlrd.open_workbook(path)
         sheet = book.sheet_by_index(0)
         rows = []
 
         for r in range(sheet.nrows):
-            row_values = [sheet.cell_value(r, c) for c in range(sheet.ncols)]
-            rows.append(row_values)
+            row = [sheet.cell_value(r, c) for c in range(sheet.ncols)]
+            rows.append(row)
 
         return self._normalize_rows(rows)
 
@@ -41,9 +46,7 @@ class TabAdapter(RawPort):
             return sum(1 for c in row if c not in (None, ""))
 
         non_empty_counts = [count_non_empty(r) for r in rows]
-        max_non_empty = max(non_empty_counts)
-
-        header_index = non_empty_counts.index(max_non_empty)
+        header_index = non_empty_counts.index(max(non_empty_counts))
         header_row = rows[header_index]
         max_cols = max(len(r) for r in rows)
 
@@ -60,6 +63,10 @@ class TabAdapter(RawPort):
                 continue
 
             normalized = list(r) + [None] * (max_cols - len(r))
-            record = {col_name: val for col_name, val in zip(header, normalized)}
+            record = {col: val for col, val in zip(header, normalized)}
             records.append(record)
         return records
+
+    def fetchMetadata(self, path: str) -> BaseMetadata | None:
+        raise MetadataUnavailableError(f"Excel format does not support metadata")
+

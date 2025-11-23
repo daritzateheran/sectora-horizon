@@ -1,9 +1,9 @@
-from typing import Protocol, Any, Mapping
+from typing import TypeVar, Protocol, Optional, Generic, List
+from ingest.fetch.metadata import BaseMetadata
 
 class RawPort(Protocol):
-    def fetchRaw(
-        self,
-        resource: str,
-        params: Mapping[str, Any] | None = None
-    ) -> list[dict]:
+    def fetchRaw(self, identifier: str) -> List[dict]:
+        ...
+
+    def fetchMetadata(self, identifier: str) -> Optional[BaseMetadata]:
         ...

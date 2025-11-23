@@ -1,7 +1,7 @@
 import yaml
-from ingest.dataset import Dataset
 import config as cfg
-from ingest.dataset import SourceType
+from ingest.dataset import Dataset, SourceType
+from ingest.errors import DatasetNotFoundError
 
 class DatasetCatalog:
     def __init__(self, yaml_path: str = f"{cfg.DATA_PATH}/datasets.yaml"):
@@ -10,15 +10,14 @@ class DatasetCatalog:
         self.raw = data["datasets"]
 
     def get(self, name: str) -> Dataset:
-        ds = self.raw[name]
-        page_size = ds.get("page_size", cfg.DEFAULT_PAGE_SIZE)
+        if name not in self.raw: raise DatasetNotFoundError(name)
+        ds = self.raw[name]        
         return Dataset(
             name=name,
             source=SourceType(ds["source"]),
-            path_or_url=ds["path_or_url"],
-            page_size=page_size,
+            path=ds.get("path"),
+            resource_id=ds.get("resource_id"),
         )
-    
-    def list_datasets(self) -> list[Dataset]:
-        """Devuelve todos los datasets del catálogo como objetos Dataset."""
-        return [self.get(name) for name in self.raw.keys()]
+
+    def list(self) -> list[Dataset]:
+        return [self.get(n) for n in self.raw.keys()]

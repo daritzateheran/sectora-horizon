@@ -9,9 +9,7 @@ The project follows a modular structure. Shared logic lives in a common core; ch
 ## Repository Structure
 ```bash
 data-ecosystem/
-├── src/
-│   ├── core/               # Shared logic for both challenges
-│   └── superintendencia/   # Challenge-specific code
+├── src/                    # Core logic for challenge
 ├── scripts/                # ETLs, preprocessing, EDA runners, pipelines
 ├── data/
 │   ├── raw/                # Unmodified datasets
@@ -44,11 +42,15 @@ DATA_PATH=/path/to/data/
 
 ## Development Guidelines
 
+- Create a new branch over dev/<process>-<user> for your work and open a PR to ```main```when ready.
+- Hotfixes could be made directly on ```main```.
+
+Follow the structure:
 - Domain logic → src/
 - Scripts (ETL, EDA, preprocessing, pipelines) → scripts/
 - Notebooks → ```sandbox/<user>/``` or in ```sandbox/<process>```
-- Data → data/raw/ and data/processed/
-- No credentials outside .devcontainer/.env
+- Data → ```data/raw/``` and ```data/processed/```
+- No credentials outside ```.devcontainer/.env```
 
 ## Using the Devcontainer
 

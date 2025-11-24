@@ -7,7 +7,7 @@ from ingest.errors import RawLoadError, MetadataUnavailableError
 
 class ExcelAdapter(RawPort):
 
-    def fetchRaw(self, path: str) -> list[dict]:
+    def fetch_raw(self, path: str) -> list[dict]:
         try:
             ext = os.path.splitext(path)[1].lower()
 
@@ -67,6 +67,6 @@ class ExcelAdapter(RawPort):
             records.append(record)
         return records
 
-    def fetchMetadata(self, path: str) -> BaseMetadata | None:
+    def fetch_metadata(self, path: str) -> BaseMetadata | None:
         raise MetadataUnavailableError(f"Excel format does not support metadata")
 

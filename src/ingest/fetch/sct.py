@@ -20,7 +20,7 @@ class SocrataAdapter(RawPort):
         except Exception as e:
             raise RawLoadError(f"Socrata fetch failed: {e}")
 
-    def fetchPaged(self, resource_id: str, batch_size: int = 50_000):
+    def fetch_paged(self, resource_id: str, batch_size: int = 50_000):
         """
         Itera sobre todas las páginas del recurso usando $limit/$offset.
         No forma parte del contrato RawPort, pero se mantiene para uso interno.
@@ -60,13 +60,13 @@ class SocrataAdapter(RawPort):
         data = json.loads(raw_bytes)
         return data if isinstance(data, list) else []
 
-    def fetchRaw(self, resource_id: str) -> list[dict]:
+    def fetch_raw(self, resource_id: str) -> list[dict]:
         """
-        Llama a fetchPaged internamente y devuelve todo el dataset en memoria.
+        Llama a fetch_paged internamente y devuelve todo el dataset en memoria.
         """
-        return list(self.fetchPaged(resource_id))
+        return list(self.fetch_paged(resource_id))
 
-    def fetchMetadata(self, resource_id: str) -> Optional[SocrataMetadata]:
+    def fetch_metadata(self, resource_id: str) -> Optional[SocrataMetadata]:
         headers = {}
         if cfg.SOCRATA_TOKEN:
             headers["X-App-Token"] = cfg.SOCRATA_TOKEN

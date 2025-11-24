@@ -17,7 +17,7 @@ data-ecosystem/
 │   ├── raw/                # Unmodified datasets
 │   └── processed/          # Cleaned / engineered datasets
 ├── sandbox/                # Personal workspaces
-│       ├── eda.ipynb
+│       ├── eda/
 │       ├── dari/
 │       └── ...
 │       # general notebooks can go directly under sandbox/
@@ -31,12 +31,22 @@ data-ecosystem/
 
 This file will hold any credentials, paths, or configuration required for local execution inside the devcontainer.
 
+```bash
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+POSTGRES_PORT=
+POSTGRES_HOST=
+
+SOCRATA_BASE_URL=https://www.datos.gov.co
+DATA_PATH=/path/to/data/
+```
+
 ## Development Guidelines
 
-- Shared logic → src/core/
-- Challenge-specific logic → src/superintendencia/ or src/gb-santander/
+- Domain logic → src/
 - Scripts (ETL, EDA, preprocessing, pipelines) → scripts/
-- Notebooks → sandbox/<name>/ or in sandbox/ for general work
+- Notebooks → ```sandbox/<user>/``` or in ```sandbox/<process>```
 - Data → data/raw/ and data/processed/
 - No credentials outside .devcontainer/.env
 

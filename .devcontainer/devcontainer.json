@@ -8,7 +8,7 @@
     "vscode": {
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
-        "python.pythonPath": "/usr/local/bin/python"
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
       },
       "extensions": [
         "ms-python.python",

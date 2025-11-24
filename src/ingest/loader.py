@@ -16,12 +16,12 @@ class RawDatasetLoader:
         Carga todos los registros del dataset según su tipo de origen.
         """
         if ds.source == SourceType.CSV:
-            return self.csv.fetchRaw(ds.path)
+            return self.csv.fetch_raw(ds.path)
         if ds.source == SourceType.EXCEL:
-            return self.excel.fetchRaw(ds.path)
+            return self.excel.fetch_raw(ds.path)
         if ds.source == SourceType.SOCRATA:
             #  paginación interna
-            return self.sct.fetchRaw(ds.resource_id)
+            return self.sct.fetch_raw(ds.resource_id)
         raise UnsupportedSourceError(ds.source)
 
 
@@ -30,9 +30,9 @@ class RawDatasetLoader:
         Devuelve metadata del origen si está disponible.
         """
         if ds.source == SourceType.CSV:
-            return self.csv.fetchMetadata(ds.path)
+            return self.csv.fetch_metadata(ds.path)
         if ds.source == SourceType.EXCEL:
-            return self.excel.fetchMetadata(ds.path)
+            return self.excel.fetch_metadata(ds.path)
         if ds.source == SourceType.SOCRATA:
-            return self.sct.fetchMetadata(ds.resource_id)
+            return self.sct.fetch_metadata(ds.resource_id)
         raise UnsupportedSourceError(ds.source)

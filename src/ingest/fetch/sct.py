@@ -40,8 +40,6 @@ class SocrataAdapter(RawPort):
         query = urlencode(params)
         headers = {}
 
-        if cfg.SOCRATA_TOKEN:
-            headers["X-App-Token"] = cfg.SOCRATA_TOKEN
         csv_url = f"{self.BASE}/resource/{resource_id}.csv"
         if query:
             csv_url += f"?{query}"
@@ -68,8 +66,6 @@ class SocrataAdapter(RawPort):
 
     def fetch_metadata(self, resource_id: str) -> Optional[SocrataMetadata]:
         headers = {}
-        if cfg.SOCRATA_TOKEN:
-            headers["X-App-Token"] = cfg.SOCRATA_TOKEN
         url = f"{self.BASE}/api/views/{resource_id}"
         try:
             raw = json.loads(self._download(url, headers))

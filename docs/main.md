@@ -24,24 +24,6 @@
         - “¿cómo se proyectan las ganancias según el patrimonio?”).
 - [ ] OE5. Generar una herramienta de apoyo para la toma de decisiones basadas en datos.
 
-## Definición
-
-### Dominio del problema
-
-Se intenta responder tres preguntas (Qué pasó?):
-
-- ¿Qué empresa es?
-- ¿Qué actividad económica realiza y dónde opera?
-- ¿Cómo se comporta financieramente en el tiempo/sector/región?
-
-Y debe permitir construir (Qué pasará?):
-
-- Proyecciones de ganancia
-- Análisis por sector
-- Comparaciones interanuales
-- Relación con macroeconomía
-
----
 ### Posibles Features:
 
 - Empresas_10k:

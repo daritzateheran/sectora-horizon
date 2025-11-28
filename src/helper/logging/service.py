@@ -1,4 +1,4 @@
-from logging.logger import Logger, get_logger
+from helper.logging.logger import Logger, get_logger
 from enum import Enum
 
 class PipelineTag(Enum):

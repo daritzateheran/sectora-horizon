@@ -63,3 +63,14 @@ def normalize_code_to_length(value, target_length: int):
     if len(text) > target_length:
         return None
     return text.zfill(target_length)
+
+def normalize_text(s: str):
+    if pd.isna(s):
+        return None
+    s = str(s).upper().strip()
+    s = "".join(
+        c for c in unicodedata.normalize("NFKD", s)
+        if not unicodedata.combining(c)
+    )
+    s = s.replace(",", "").replace(".", "").strip()
+    return s

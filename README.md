@@ -1,4 +1,5 @@
-# data-ecosystem-superintendencia
+# SECTORA HORIZON
+A Future-Focused Analytics System for Industries and Businesses..
 
 This repository contains the analytical work for challenge:
 

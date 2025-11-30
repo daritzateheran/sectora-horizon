@@ -21,7 +21,7 @@
   },
   "remoteUser": "dev",
   "workspaceFolder": "/workspaces/data-ecosystem",
-  "postCreateCommand": "pip install -e .[dev,ml,viz]",
+  "postCreateCommand": "pip install -e .[dev,ml,pg,viz]",
   "runArgs": ["--network=host","--env-file", ".devcontainer/.env"],
   "mounts": [
     "source=${env:HOME}/lab/data,target=/workspaces/data-ecosystem/data,type=bind"

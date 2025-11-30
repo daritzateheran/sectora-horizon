@@ -74,3 +74,10 @@ def normalize_text(s: str):
     )
     s = s.replace(",", "").replace(".", "").strip()
     return s
+
+def to_float(x):
+    if pd.isna(x):
+        return None
+    s = str(x).strip().replace(".", "").replace(",", ".")
+    try: return float(s)
+    except: return None

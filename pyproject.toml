@@ -27,6 +27,11 @@ ml = [
     "rapidfuzz"
 ]
 
+pg = [
+    "psycopg2-binary==2.9.3",
+    "sqlalchemy==2.0.44"
+]
+
 viz = [
     "matplotlib==3.9.0",
     "seaborn==0.13.2",

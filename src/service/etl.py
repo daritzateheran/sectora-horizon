@@ -1,11 +1,9 @@
 from ingest.catalog import DatasetCatalog
 from ingest.loader import RawDatasetLoader
 from utils.uuid import generate_deterministic_id_name_based
-from utils.clean import clean_text, is_numeric_string, normalize_code_to_length, normalize_text
+from utils.clean import clean_text, normalize_code_to_length, normalize_text
 import pandas as pd
-import gc
-
-import psutil, os
+import psutil, os, gc
 
 def mem():
     print(f"Memory: {psutil.Process(os.getpid()).memory_info().rss/1024**2:.1f} MB")
@@ -18,6 +16,7 @@ class ETL:
             ciiu,
             location,
             year,
+            macroeco,
             # financial,
             catalog=DatasetCatalog,
             loader=RawDatasetLoader,
@@ -28,6 +27,7 @@ class ETL:
         self.ciiu = ciiu
         self.location = location
         self.year = year
+        self.macroeco = macroeco
         # self.financial = financial
         self.catalog = catalog
         self.loader = loader
@@ -36,31 +36,26 @@ class ETL:
         
         df_10k = self._get_fixed_data(name)
 
-        total_data = 0
-
         ## Company
         df_company = self._build_company(df_10k)
 
         ## Ciiu
         df_10k["ciiu_code"] = df_10k["ciiu"].apply(lambda x: normalize_code_to_length(x, 4))
-        ds = self.catalog.get("ciiu")
-        records = list(self.loader.load(ds))
-        ciiu = pd.DataFrame(records)
-
+        ciiu = self._get_fixed_data("ciiu")
         df_ciiu = self._fix_ciiu(ciiu)
 
         ## Location
-        ds = self.catalog.get("divipola")
-        records = list(self.loader.load(ds))
-        df_div = pd.DataFrame(records)
-
+        df_div = self._get_fixed_data("divipola")
         df_loc = self._fix_dept(df_10k, df_div)
 
         ## Year
-
         fix_fina = self._fix_financial(df_10k, df_ciiu, df_loc)
 
-        return df_company, df_ciiu, df_loc, fix_fina
+        ## MacroEconomical
+        df_banrep_raw = self._get_fixed_data("ban_rep")
+        df_macro = self.macroeco.clean(df_banrep_raw)
+
+        return df_company, df_ciiu, df_loc, fix_fina, df_macro
     
     def load(self, df, tbl):
         try:
@@ -80,11 +75,10 @@ class ETL:
     
     # ---------------- Internals ----------------
 
-    def _get_fixed_data(self, name):
+    def _get_fixed_data(self, name: str) -> pd.DataFrame:
         ds = self.catalog.get(name)
         records = list(self.loader.load(ds))
-        df = pd.DataFrame(records)
-        return df
+        return pd.DataFrame(records)
     
     def _build_company(self, df):
         df.raz_n_social = df.apply(
@@ -217,4 +211,3 @@ class ETL:
         main_df['dept_name']=loc['dept_name']
 
         return main_df[["company_id", "year", "ciiu_code", "macrosector_calc", "dept_code", "dept_name", "ingresos", "ganancias", "activos", "pasivos", "patrimonio", "supervisor"]]
-    

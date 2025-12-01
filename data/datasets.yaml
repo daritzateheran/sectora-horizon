@@ -1,0 +1,40 @@
+datasets:
+  empresas_10k:
+    source: socrata
+    resource_id: "6cat-2gcs"
+
+  pib_municipios:
+    source: socrata
+    resource_id: "kgyi-qc7j"
+
+  divipola:
+    source: socrata
+    resource_id: "gdxc-w37w"
+
+  empresas_10k_csv:
+    source: csv
+    path: "/workspaces/data-ecosystem/data/raw/10.000_Empresas_mas_Grandes_del_País_20251120.csv"
+
+  IPCanal:
+    source: csv
+    path: "/workspaces/data-ecosystem/data/raw/IPCanual.csv"
+
+  ciiu:
+    source: csv
+    path: "/workspaces/data-ecosystem/data/processed/ciiu.csv"
+
+  master_csv:
+    source: csv
+    path: "/workspaces/data-ecosystem/data/processed/empresas_10k_master.csv"
+
+  ciuu_4ac:
+    source: excel
+    path: "/workspaces/data-ecosystem/data/raw/tablaciiu2022.xlsx"
+
+  ban_rep:
+    source: excel
+    path: "/workspaces/data-ecosystem/data/raw/banrep.xlsx"
+  
+  ciuu_4ac_dane:
+    source: excel
+    path: "/workspaces/data-ecosystem/data/raw/EstructuraDetalladaCIIU_4AC.xls"

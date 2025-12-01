@@ -8,9 +8,11 @@ from ingest.fetch.excel import ExcelAdapter
 from adapter.entities.ciiu import Ciiu
 from adapter.entities.location import Location
 from adapter.entities.year import ReportYear
+from adapter.entities.macroeco import MacroEco
 from sqlalchemy import create_engine
 import pandas as pd
 from envt.config import load_config
+import traceback
 from helper.logging.logger import Logger
 
 log = Logger("file_register", log_to_file=False, level="INFO")
@@ -35,6 +37,7 @@ def main():
             ciiu=Ciiu(),
             location = Location(),
             year=ReportYear(),
+            macroeco=MacroEco(),
             catalog=DatasetCatalog(),
             loader = RawDatasetLoader(
             csv_adapter=CsvAdapter(),
@@ -43,13 +46,14 @@ def main():
             ),
         )
 
-        df_company, df_ciiu, df_loc, df_year = eda.eda_build(name="empresas_10k")
+        df_company, df_ciiu, df_loc, df_year, df_macroeco = eda.eda_build(name="empresas_10k")
 
         tables = {
             'Company': df_company,
             'Ciiu': df_ciiu,
             'Location': df_loc,
             'ReportYear': df_year,
+            'MacroEconomy': df_macroeco
             # 'FinancialDerived': df_
         }
         for n in tables:
@@ -59,6 +63,7 @@ def main():
 
     except Exception as e:
         log.error(f'Process failed wit error: {e}')
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()

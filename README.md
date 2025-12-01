@@ -30,7 +30,7 @@ sectora-horizon/
 The system provides two main dashboards: **Historical** and **Predictive**.
 
 **Access Metabase:**  
-`http://super.eastus.cloudapp.azure.com:3080/public/dashboard/8b77ad68-c6e5-4919-a387-0638966b4476`
+🔗 [Open Dashboard - http://super.eastus.cloudapp.azure.com:3080/public/dashboard/8b77ad68-c6e5-4919-a387-0638966b4476](http://super.eastus.cloudapp.azure.com:3080/public/dashboard/8b77ad68-c6e5-4919-a387-0638966b4476)
 
 ---
 
@@ -56,13 +56,7 @@ Updated automatically when running the inference module:
 - Estimated earnings.  
 - Sector ranking under different macroeconomic assumptions (PIB, interest rates).  
 - Dashboards refresh automatically once PostgreSQL tables are updated.
-
-**Historical vs Predicted Validation**
-
-<p align="center">
-  <img src="src/utils/assets/predicciones.png" width="700">
-</p>
-
+  
 **Company-Level Financial View**
 
 <p align="center">
@@ -85,7 +79,6 @@ Both models use **78 numerical and engineered features**, including:
 - Macroeconomic variables (GDP, inflation, DTF, TRM)  
 - Sectoral dummy variables  
 - Interaction terms: *sector × GDP* and *sector × DTF*
-
 ---
 
 ## Final Metrics (MAE %)
@@ -97,6 +90,14 @@ Both models use **78 numerical and engineered features**, including:
 
 Both models exhibit **high stability** and **low variance**, making them suitable for large-scale financial forecasting.
 
+**Historical vs Predicted Validation**
+
+<p align="center">
+  <img src="src/utils/assets/predicciones.png" width="700">
+</p>
+
+
 ## Documentation
 
-Technical details/workflow, dataset structure, modeling logic, and Metabase integration—are available in: docs/
+Technical details/workflow, dataset structure, modeling logic, and Metabase integration — are available in  
+📁 **[docs/](docs/)**

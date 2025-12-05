@@ -1,0 +1,39 @@
+services:
+  wireguard:
+    image: linuxserver/wireguard:1.0.20210914-r4-ls71
+    container_name: vpn_wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${VPNTZ}
+      - SERVERPORT=${VPNPORT}
+      - SERVERURL=${VPNURL}
+      - PEERS=8
+      - PEERDNS=auto
+      - INTERNAL_SUBNET=192.168.2.0
+    volumes:
+      - ./data:/config
+      - /lib/modules:/lib/modules
+      - /usr/src:/usr/src
+    ports:
+      - 51820:51820/udp # open WireGuard port
+    dns:
+      - 10.10.3.200 # Internal DNS server
+    restart: unless-stopped
+    networks:
+      network_security:
+        ipv4_address: 10.10.3.4
+      network_service:
+
+networks:
+  network_security:
+    external: true
+  network_service:
+    external: true
+
+volumes:
+  data:
+    external: false

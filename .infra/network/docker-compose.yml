@@ -1,0 +1,35 @@
+services:
+  network:
+    container_name: network-system
+    image: alpine:3.20
+    command: tail -f /dev/null # Keeps container alive to trigger network creation
+    restart: unless-stopped
+    networks:
+      db:
+        ipv4_address: 10.10.1.2
+      service:
+        ipv4_address: 10.10.2.2
+      security:
+        ipv4_address: 10.10.3.2
+
+networks:
+  db:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.1.0/24
+          gateway: 10.10.1.1
+
+  service:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.2.0/24
+          gateway: 10.10.2.1
+
+  security:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.3.0/24
+          gateway: 10.10.3.1

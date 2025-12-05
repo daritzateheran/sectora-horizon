@@ -10,6 +10,24 @@ This repository contains the analytical work for challenge:
 
 The project follows a modular structure. Shared logic lives in a common core; challenge-specific logic lives in dedicated modules.
 
+<p align="center">
+  <a href="http://super.eastus.cloudapp.azure.com:3080/public/dashboard/8b77ad68-c6e5-4919-a387-0638966b4476">
+    <img src="https://img.shields.io/badge/Dashboard-view-yellow?style=for-the-badge">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://drive.google.com/file/d/10hoC67ZqF4X9Kc_EgNOL2yG4Oe9Ku9T4/view?usp=sharing">
+    <img src="https://img.shields.io/badge/Presentation-View_Slides-blue?style=for-the-badge">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://drive.google.com/file/d/1A9cRZgQEGl6bM8GVyEl9d6zRnI-aVwU-/view?usp=sharing">
+    <img src="https://img.shields.io/badge/Project_Video-Watch_Now-red?style=for-the-badge">
+  </a>
+</p>
+
 ## Repository Structure
 ```bash
 sectora-horizon/
@@ -28,9 +46,6 @@ sectora-horizon/
 
 **Sectora Horizon** runs on **Metabase**, powered by **PostgreSQL** as the analytical engine.  
 The system provides two main dashboards: **Historical** and **Predictive**.
-
-**Access Metabase:**  
-🔗 [Open Dashboard - http://super.eastus.cloudapp.azure.com:3080/public/dashboard/8b77ad68-c6e5-4919-a387-0638966b4476](http://super.eastus.cloudapp.azure.com:3080/public/dashboard/8b77ad68-c6e5-4919-a387-0638966b4476)
 
 ---
 
@@ -95,7 +110,6 @@ Both models exhibit **high stability** and **low variance**, making them suitabl
 <p align="center">
   <img src="src/utils/assets/predicciones.png" width="700">
 </p>
-
 
 ## Documentation
 

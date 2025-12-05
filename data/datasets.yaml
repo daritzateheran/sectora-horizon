@@ -38,3 +38,7 @@ datasets:
   ciuu_4ac_dane:
     source: excel
     path: "/workspaces/data-ecosystem/data/raw/EstructuraDetalladaCIIU_4AC.xls"
+
+  predicted:
+    source: csv
+    path: "/workspaces/data-ecosystem/data/processed/resultados_predicciones_2025.csv"

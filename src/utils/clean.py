@@ -56,13 +56,14 @@ def normalize_code_to_length(value, target_length: int):
 
     text = str(value).strip()
 
-    if re.match(r"^\d+\.0$", text):
-        text = text[:-2]
-    if not text.isdigit():
+    text = re.sub(r"\.0+$", "", text)  
+    digits = re.findall(r"\d+", text)
+    if not digits:
         return None
-    if len(text) > target_length:
+    digits = digits[0]
+    if len(digits) > target_length:
         return None
-    return text.zfill(target_length)
+    return digits.zfill(target_length)
 
 def normalize_text(s: str):
     if pd.isna(s):

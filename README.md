@@ -23,7 +23,7 @@ The project follows a modular structure. Shared logic lives in a common core; ch
 </p>
 
 <p align="center">
-  <a href="https://your-video-link-here">
+  <a href="https://drive.google.com/file/d/1A9cRZgQEGl6bM8GVyEl9d6zRnI-aVwU-/view?usp=sharing">
     <img src="https://img.shields.io/badge/Project_Video-Watch_Now-red?style=for-the-badge">
   </a>
 </p>

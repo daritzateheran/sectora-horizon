@@ -2,6 +2,7 @@ from ingest.catalog import DatasetCatalog
 from ingest.loader import RawDatasetLoader
 from utils.uuid import generate_deterministic_id_name_based
 from utils.clean import clean_text, normalize_code_to_length, normalize_text
+from sqlalchemy import text
 import pandas as pd
 import psutil, os, gc
 from sqlalchemy import text
@@ -32,6 +33,7 @@ class ETL:
         self.prediction = prediction
         self.catalog = catalog
         self.loader = loader
+        self._already_truncated = set()
 
 
     def eda_build(self, name=str):
@@ -49,18 +51,19 @@ class ETL:
     
     def load(self, df, tbl):
         try:
-            print(f'importing rows 0 to {len(df)} into {tbl}...')
+            with self.engine.connect() as conn:
+                if tbl not in self._already_truncated:
+                    conn.execute(text(f'TRUNCATE "{tbl}" CASCADE;'))
+                    conn.commit()
+                    self._already_truncated.add(tbl)
 
-            with self.engine.begin() as conn:
-                conn.execute(text(f'TRUNCATE TABLE "{tbl}" RESTART IDENTITY CASCADE'))
+            print(f"importing rows into {tbl}...")
 
-            df.to_sql(tbl, self.engine, if_exists='append', index=False)
-
-            print("Data imported successful")
+            df.to_sql(tbl, self.engine, if_exists="append", index=False)
 
         except Exception as e:
             print("Data load error: " + str(e))
-    
+
     # ---------------- Internals ----------------
 
     def _get_fixed_data(self, name: str) -> pd.DataFrame:
@@ -240,3 +243,9 @@ class ETL:
             "ganancia_proyectada",
             "fuente"
         ]]
+
+# TRUNCATE "ReportYear" CASCADE;
+# TRUNCATE "Company" CASCADE;
+# TRUNCATE "Ciiu" CASCADE;
+# TRUNCATE "Location" CASCADE;
+# TRUNCATE "MacroEconomy" CASCADE;

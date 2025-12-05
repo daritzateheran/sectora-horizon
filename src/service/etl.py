@@ -4,6 +4,7 @@ from utils.uuid import generate_deterministic_id_name_based
 from utils.clean import clean_text, normalize_code_to_length, normalize_text
 import pandas as pd
 import psutil, os, gc
+from sqlalchemy import text
 
 def mem():
     print(f"Memory: {psutil.Process(os.getpid()).memory_info().rss/1024**2:.1f} MB")
@@ -17,7 +18,7 @@ class ETL:
             location,
             year,
             macroeco,
-            # financial,
+            prediction,
             catalog=DatasetCatalog,
             loader=RawDatasetLoader,
     ):
@@ -28,49 +29,36 @@ class ETL:
         self.location = location
         self.year = year
         self.macroeco = macroeco
-        # self.financial = financial
+        self.prediction = prediction
         self.catalog = catalog
         self.loader = loader
 
+
     def eda_build(self, name=str):
-        
+
         df_10k = self._get_fixed_data(name)
-
-        ## Company
         df_company = self._build_company(df_10k)
-
-        ## Ciiu
         df_10k["ciiu_code"] = df_10k["ciiu"].apply(lambda x: normalize_code_to_length(x, 4))
-        ciiu = self._get_fixed_data("ciiu")
-        df_ciiu = self._fix_ciiu(ciiu)
-
-        ## Location
-        df_div = self._get_fixed_data("divipola")
-        df_loc = self._fix_dept(df_10k, df_div)
-
-        ## Year
-        fix_fina = self._fix_financial(df_10k, df_ciiu, df_loc)
-
-        ## MacroEconomical
-        df_banrep_raw = self._get_fixed_data("ban_rep")
-        df_macro = self.macroeco.clean(df_banrep_raw)
-
-        return df_company, df_ciiu, df_loc, fix_fina, df_macro
+        df_ciiu = self._fix_ciiu(self._get_fixed_data("ciiu"))
+        df_loc = self._fix_dept(df_10k, self._get_fixed_data("divipola"))
+        df_year = self._fix_financial(df_10k, df_ciiu, df_loc)
+        df_macro = self.macroeco.clean(self._get_fixed_data("ban_rep"))
+        df_pred_raw = self._get_fixed_data("predicted")
+        df_pred = self._build_prediction(df_pred_raw, df_year, df_company, df_ciiu, df_loc)
+        return df_company, df_ciiu, df_loc, df_year, df_macro, df_pred
     
     def load(self, df, tbl):
         try:
-            rows_imported = 0
+            print(f'importing rows 0 to {len(df)} into {tbl}...')
 
-            
-            print(f'importing rows {rows_imported} to {rows_imported + len(df)} into {tbl}... ')
-            
-            df.to_sql(tbl, self.engine, if_exists='replace', index=False)
-            rows_imported += len(df)
+            with self.engine.begin() as conn:
+                conn.execute(text(f'TRUNCATE TABLE "{tbl}" RESTART IDENTITY CASCADE'))
+
+            df.to_sql(tbl, self.engine, if_exists='append', index=False)
 
             print("Data imported successful")
 
         except Exception as e:
-
             print("Data load error: " + str(e))
     
     # ---------------- Internals ----------------
@@ -206,8 +194,49 @@ class ETL:
         )
 
 
-        main_df.rename(columns={"departamento_code":"dept_code"}, inplace=True)
-
-        main_df['dept_name']=loc['dept_name']
+        main_df.rename(columns={"departamento_code": "dept_code"}, inplace=True)
+        main_df = main_df.merge(
+            loc[["dept_code", "dept_name"]],
+            on="dept_code",
+            how="left"
+        )
 
         return main_df[["company_id", "year", "ciiu_code", "macrosector_calc", "dept_code", "dept_name", "ingresos", "ganancias", "activos", "pasivos", "patrimonio", "supervisor"]]
+
+    def _build_prediction(self, df_pred, df_year, df_company, df_ciiu, df_loc):
+
+        df_pred = self.prediction.clean_predicted(df_pred)
+        df_pred["year"] = "2025"
+        df_pred["fuente"] = "PREDICCION"
+
+        df_pred = df_pred.merge(
+            df_company[["company_id", "nit"]],
+            on="company_id",
+            how="left"
+        )
+        last_year = df_year[df_year["year"] == "2024"]
+
+        df_pred = df_pred.merge(
+            last_year[["company_id", "ciiu_code", "macrosector_calc", "dept_code"]],
+            on="company_id",
+            how="left"
+        )
+        df_pred = df_pred.merge(
+            df_loc[["dept_code", "dept_name"]],
+            on="dept_code",
+            how="left"
+        )
+
+        return df_pred[[
+            "company_id",
+            "year",
+            "ciiu_code",
+            "macrosector_calc",
+            "dept_code",
+            "dept_name",
+            "ingresos",
+            "ganancias",
+            "prediccion_margen",
+            "ganancia_proyectada",
+            "fuente"
+        ]]

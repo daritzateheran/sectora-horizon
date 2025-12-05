@@ -46,15 +46,15 @@ def main():
             ),
         )
 
-        df_company, df_ciiu, df_loc, df_year, df_macroeco = eda.eda_build(name="empresas_10k")
+        df_company, df_ciiu, df_loc, df_year, df_macroeco, df_pred = eda.eda_build(name="empresas_10k")
 
         tables = {
             'Company': df_company,
             'Ciiu': df_ciiu,
             'Location': df_loc,
             'ReportYear': df_year,
-            'MacroEconomy': df_macroeco
-            # 'FinancialDerived': df_
+            'MacroEconomy': df_macroeco,
+            'ReportYearPrediction': df_pred
         }
         for n in tables:
             load = eda.load(tables[n], n)   

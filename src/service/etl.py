@@ -2,6 +2,7 @@ from ingest.catalog import DatasetCatalog
 from ingest.loader import RawDatasetLoader
 from utils.uuid import generate_deterministic_id_name_based
 from utils.clean import clean_text, normalize_code_to_length, normalize_text
+from sqlalchemy import text
 import pandas as pd
 import psutil, os, gc
 
@@ -31,6 +32,7 @@ class ETL:
         # self.financial = financial
         self.catalog = catalog
         self.loader = loader
+        self._already_truncated = set()
 
     def eda_build(self, name=str):
         
@@ -38,6 +40,7 @@ class ETL:
 
         ## Company
         df_company = self._build_company(df_10k)
+        df_company = df_company.drop_duplicates(subset=["nit"])
 
         ## Ciiu
         df_10k["ciiu_code"] = df_10k["ciiu"].apply(lambda x: normalize_code_to_length(x, 4))
@@ -47,6 +50,7 @@ class ETL:
         ## Location
         df_div = self._get_fixed_data("divipola")
         df_loc = self._fix_dept(df_10k, df_div)
+        df_loc = df_loc.drop_duplicates(subset=["dept_code"])
 
         ## Year
         fix_fina = self._fix_financial(df_10k, df_ciiu, df_loc)
@@ -59,20 +63,21 @@ class ETL:
     
     def load(self, df, tbl):
         try:
-            rows_imported = 0
+            with self.engine.connect() as conn:
+                if tbl not in self._already_truncated:
+                    conn.execute(text(f'TRUNCATE "{tbl}" CASCADE;'))
+                    conn.commit()
+                    self._already_truncated.add(tbl)
 
-            
-            print(f'importing rows {rows_imported} to {rows_imported + len(df)} into {tbl}... ')
-            
-            df.to_sql(tbl, self.engine, if_exists='replace', index=False)
-            rows_imported += len(df)
+            print(f"importing rows into {tbl}...")
+
+            df.to_sql(tbl, self.engine, if_exists="append", index=False)
 
             print("Data imported successful")
 
         except Exception as e:
-
             print("Data load error: " + str(e))
-    
+
     # ---------------- Internals ----------------
 
     def _get_fixed_data(self, name: str) -> pd.DataFrame:
@@ -210,4 +215,10 @@ class ETL:
 
         main_df['dept_name']=loc['dept_name']
 
-        return main_df[["company_id", "year", "ciiu_code", "macrosector_calc", "dept_code", "dept_name", "ingresos", "ganancias", "activos", "pasivos", "patrimonio", "supervisor"]]
+        return main_df[["company_id", "year", "ciiu_code", "macrosector_calc", "dept_code", "ingresos", "ganancias", "activos", "pasivos", "patrimonio", "supervisor"]]
+
+# TRUNCATE "ReportYear" CASCADE;
+# TRUNCATE "Company" CASCADE;
+# TRUNCATE "Ciiu" CASCADE;
+# TRUNCATE "Location" CASCADE;
+# TRUNCATE "MacroEconomy" CASCADE;
